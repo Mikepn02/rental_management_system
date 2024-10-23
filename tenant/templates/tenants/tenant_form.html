@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load tenant_filters %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Update Tenant
+    {% else %}
+        Create New Tenant
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
+    <h1 class="text-xl font-bold text-[#65FE08] mb-6">
+        {% if form.instance.pk %}
+            Update Tenant
+        {% else %}
+            Create New Tenant
+        {% endif %}
+    </h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="space-y-4">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                {{ form.name|add_class:"w-full p-3 border border-gray-300 rounded-lg" }}
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                {{ form.email|add_class:"w-full p-3 border border-gray-300 rounded-lg" }}
+            </div>
+
+            <div>
+                <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                {{ form.phone_number|add_class:"w-full p-3 border border-gray-300 rounded-lg" }}
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="bg-[#65FE08] text-white p-3 rounded-lg">
+                    {% if form.instance.pk %}
+                        Update Tenant
+                    {% else %}
+                        Create Tenant
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

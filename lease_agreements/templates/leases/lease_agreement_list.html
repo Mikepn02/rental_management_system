@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Lease Agreements{% endblock %}
+
+{% block content %}
+<div class="space-y-10 p-6">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+        <h1 class="font-bold text-lg md:text-2xl text-[#65FE08] mb-4">
+            Lease Agreements
+        </h1>
+        <a href="{% url 'create_lease_agreement' %}" class="bg-[#66fe08b6] text-white py-2 px-4 rounded-lg hover:bg-[#65FE08]">
+            Add New Lease Agreement
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 bg-white shadow-md rounded-lg overflow-hidden">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr class="bg-lime-100">
+                    <th scope="col" class="p-4">#</th>
+                    <th scope="col" class="p-4">Property</th>
+                    <th scope="col" class="p-4">Tenant</th>
+                    <th scope="col" class="p-4">Start Date</th>
+                    <th scope="col" class="p-4">End Date</th>
+                    <th scope="col" class="p-4">Monthly Rent</th>
+                    <th scope="col" class="p-4">Lease Signed</th>
+                    <th scope="col" class="p-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lease_agreement in lease_agreements %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="p-4">{{ lease_agreement.id }}</td>
+                    <td class="p-4">{{ lease_agreement.property }}</td>
+                    <td class="p-4">{{ lease_agreement.tenant }}</td>
+                    <td class="p-4">{{ lease_agreement.start_date }}</td>
+                    <td class="p-4">{{ lease_agreement.end_date }}</td>
+                    <td class="p-4">{{ lease_agreement.monthly_rent }}</td>
+                    <td class="p-4">
+                        {% if lease_agreement.lease_signed %}
+                        <span class="text-green-600">Yes</span>
+                        {% else %}
+                        <span class="text-red-600">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 flex space-x-2">
+                        <a href="{% url 'update_lease_agreement' lease_agreement.id %}" class="text-blue-500 hover:underline">Update</a>
+                        <form action="{% url 'delete_lease_agreement' lease_agreement.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
