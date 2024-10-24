@@ -16,13 +16,15 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.utils.decorators import method_decorator
 from rest_framework.permissions import IsAuthenticated
-
+from rental.models import Property
+from lease_agreements.models import LeaseAgreement
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
-from .serializers import UserSerializer  # Make sure your serializer is correctly imported
+from .serializers import UserSerializer
+from django.db.models import Sum
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -133,7 +135,22 @@ def custom_login_required(view_func):
 @custom_login_required
 def dashboard(request):
     user = request.user
-    return render(request, 'dashboard.html', {'user': user})
+    properties = Property.objects.all()
+    total_income = LeaseAgreement.objects.aggregate(total=Sum('monthly_rent'))['total'] or 0
+    total_expenses = Property.objects.aggregate(total=Sum('monthly_expenses'))['total'] or 0
+    total_properties = Property.objects.count()
+    total_leases = LeaseAgreement.objects.count()
+    
+    context = {
+        'user': user,
+        'properties': properties,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'total_properties': total_properties,
+        'total_leases': total_leases,
+    }
+
+    return render(request, 'dashboard.html', context)
 
 
 def login_page(request):

@@ -5,25 +5,26 @@ Dashboard - Overview
 {% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Welcome to your Dashboard!</h1>
+<h1 class="text-2xl font-bold mb-4">Welcome Back 🖐️,<span class="text-[#65FE08] font-bold capitalize"> {{ user.username }}</span></h1>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-2 md:gap-x-6">
-  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-blue-500">
+  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-[#65FE08]">
     <h3 class="text-xl font-extrabold">Total Income</h3>
-    <p class="text-3xl font-bold">3000000RWF</p>
+    <p class="text-3xl font-bold">{{ total_income }} RWF</p>
   </div>
-  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-blue-500">
+  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-[#65FE08]">
     <h3 class="text-xl font-extrabold">Total Expenses</h3>
-    <p class="text-3xl font-bold">3000000RWF</p>
+    <p class="text-3xl font-bold">{{ total_expenses }} RWF</p>
   </div>
-  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-blue-500">
-    <h3 class="text-xl font-extrabold">Total House For Rent</h3>
-    <p class="text-3xl font-bold">30</p>
+  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-[#65FE08]">
+    <h3 class="text-xl font-extrabold">Total Houses For Rent</h3>
+    <p class="text-3xl font-bold">{{ total_properties }}</p>
   </div>
-  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-blue-500">
+  <div class="bg-white shadow-lg w-full p-6 flex flex-col gap-y-3 rounded-md text-[#65FE08]">
     <h3 class="text-xl font-extrabold">Total Lease Agreements</h3>
-    <p class="text-3xl font-bold">10</p>
+    <p class="text-3xl font-bold">{{ total_leases }}</p>
   </div>
 </div>
+
 
 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-y-2 md:gap-x-5">
   <div class="bg-white shadow-lg mt-6 p-6 rounded-md">
@@ -38,6 +39,54 @@ Dashboard - Overview
       <canvas id="propertiesChart"></canvas>
     </div>
   </div>
+</div>
+
+
+<div class="overflow-x-auto mt-10">
+  <h1 class="text-xl font-bold text-[#65FE08] mb-10">Here are All Rent Properties</h1>
+  <table class="w-full text-sm text-left text-gray-500 bg-white shadow-md rounded-lg overflow-hidden">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr class="text-left bg-lime-100">
+        <th scope="col" class="p-4">
+          <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded focus:ring-blue-500" />
+          <label for="checkbox-all-search" class="sr-only">checkbox</label>
+        </th>
+        <th class="p-4 font-medium">#</th>
+        <th class="p-4 font-medium">Property Name</th>
+        <th class="p-4 font-medium">Address</th>
+        <th class="p-4 font-medium">Owner</th>
+        <th class="p-4 font-medium">Type</th>
+        <th class="p-4 font-medium">Rent Amount</th>
+        <th class="p-4 font-medium">Monthly Expenses</th>
+        <th class="p-4 font-medium">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      {% for property in properties %}
+      <tr class="bg-white border-b hover:bg-gray-50">
+        <td class="w-4 p-4">
+          <div class="flex items-center">
+            <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-600 border-gray-300 rounded focus:ring-blue-500" />
+          </div>
+        </td>
+        <td class="p-4">{{ property.id }}</td>
+        <td class="p-4">{{ property.property_name }}</td>
+        <td class="p-4">{{ property.address }}</td>
+        <td class="p-4">{{ property.owner }}</td>
+        <td class="p-4">{{ property.property_type }}</td>
+        <td class="p-4">{{ property.rent_amount }}</td>
+        <td class="p-4">{{ property.monthly_expenses}}</td>
+        <td class="p-4 flex space-x-2">
+          <a href="{% url 'update_property' property.id %}" class="text-[#65FE08] hover:underline">Update</a>
+          <form action="{% url 'delete_property' property.id %}" method="POST" class="inline-block">
+            {% csrf_token %}
+            <button type="submit" class="text-red-500 hover:underline">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 <script>
