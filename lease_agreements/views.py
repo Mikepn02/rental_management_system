@@ -2,11 +2,15 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .forms import LeaseAgreementForm
 from .models import LeaseAgreement
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 @login_required
 def lease_agreement_list_view(request):
     lease_agreements = LeaseAgreement.objects.all()
-    return render(request, 'leases/lease_agreement_list.html', {'lease_agreements': lease_agreements})
+    paginator = Paginator(lease_agreements , 10)
+    page_number = request.GET.get('page', 1)
+    lease_agreements_page = paginator.get_page(page_number)
+    return render(request, 'leases/lease_agreement_list.html', {'lease_agreements': lease_agreements_page})
 
 
 @login_required

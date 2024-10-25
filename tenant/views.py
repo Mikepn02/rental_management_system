@@ -2,11 +2,15 @@ from django.shortcuts import get_object_or_404 , redirect , render
 from .forms import TenantForm
 from .models import Tenant
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 @login_required
 def tenant_list_view(request):
     tenants = Tenant.objects.all()
-    return render(request , 'tenants/tenant_list.html', {'tenants': tenants})
+    paginator = Paginator(tenants , 10)
+    page_number = request.GET.get('page', 1)
+    tenants_page = paginator.get_page(page_number)
+    return render(request , 'tenants/tenant_list.html', {'tenants': tenants_page})
 
 
 @login_required

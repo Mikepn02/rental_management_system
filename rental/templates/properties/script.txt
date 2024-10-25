@@ -1,0 +1,28 @@
+from rental.models import Property
+from faker import Faker
+import random
+
+fake = Faker()
+
+property_types = ['House', 'Apartment']
+
+num_properties = 100
+
+# Generate and insert properties
+for _ in range(num_properties):
+    property_name = fake.street_name()
+    address = fake.address()
+    owner = fake.name()
+    property_type = random.choice(property_types)
+    rent_amount = round(random.uniform(800, 3000), 2)  # Random rent amount between $800 and $3000
+    monthly_expenses = round(random.uniform(100, 500), 2)  # Random expenses between $100 and $500
+    Property.objects.create(
+        property_name=property_name,
+        address=address,
+        owner=owner,
+        property_type=property_type,
+        rent_amount=rent_amount,
+        monthly_expenses=monthly_expenses
+    )
+
+print(f"{num_properties} properties inserted successfully!")

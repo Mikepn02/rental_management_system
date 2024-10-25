@@ -4,6 +4,7 @@ from .forms import PropertyForm
 from .models import Property
 from authentication.models import User
 import logging
+from django.core.paginator import Paginator
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,11 @@ def rental_properties_page(request):
 
     user = request.user
     properties = Property.objects.all()
-    return render(request, 'properties/properties.html', {'properties': properties, 'user': user})
+
+    paginator=Paginator(properties,10)
+    page_number=request.GET.get('page',1)
+    proterties_page=paginator.get_page(page_number)
+    return render(request, 'properties/properties.html', {'properties': proterties_page, 'user': user})
 
 @login_required
 def create_property_view(request):

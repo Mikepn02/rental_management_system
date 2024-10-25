@@ -56,7 +56,7 @@
               >Dashboard</a
             >
             <a
-              href='{% url "rental_properties" %}'
+              href="{% url 'rental_properties' %}"
               class="text-white hover:bg-green-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
               >Rental Properties</a
             >
@@ -76,91 +76,54 @@
 
       <!-- Desktop Sidebar -->
       <div
-        :class="isCollapsed ? 'lg:w-16' : 'lg:w-64'"
-        class="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-[#65FE08] transition-width duration-300"
-      >
-        <div class="flex items-center justify-between p-4">
-          <img src="{% static 'logo-white.png' %}" class="w-full h-auto" alt="Background Image" />
-        </div>
-        <nav class="mt-5 flex-1 px-2 space-y-1">
-          <a
-            href="{% url 'dashboard' %}"
-            class="bg-green-800 text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-            >Dashboard</a
-          >
-          <a
-            href='{% url "rental_properties" %}'
-            class="text-white hover:bg-green-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-            >Rental Properties</a
-          >
-          <a
-            href="{% url 'tenant_list' %}"
-            class="text-white hover:bg-green-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-            >Tenant Records</a
-          >
-          <a
-            href="{% url 'lease_agreement_list' %}"
-            class="text-white hover:bg-green-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md"
-            >Lease Agreements</a
-          >
-        </nav>
-        <form action="{% url 'logout' %}" method="post" class="mt-auto p-4">
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="text-white font-extrabold transition-colors flex items-center space-x-4"
-          >
-            <img src="{% static 'logout.png' %}" class="w-10 h-10" alt="Background Image" />
-            Logout
-          </button>
-        </form>
+      :class="isCollapsed ? 'lg:w-16' : 'lg:w-64'"
+      class="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 bg-[#65FE08] transition-width duration-300"
+    >
+      <div class="flex items-center justify-between p-4">
+        <img src="{% static 'logo-white.png' %}" class="w-full h-auto" alt="Logo" />
       </div>
+      <nav class="mt-5 flex-1 px-2 space-y-1">
+        <a
+          href="{% url 'dashboard' %}"
+          class="{% if request.resolver_match.url_name == 'dashboard' %}bg-green-800 text-white{% else %}text-white hover:bg-green-700{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+          >Dashboard</a
+        >
+        <a
+          href="{% url 'rental_properties' %}"
+          class="{% if request.resolver_match.url_name == 'rental_properties' %}bg-green-800 text-white{% else %}text-white hover:bg-green-700{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+          >Rental Properties</a
+        >
+        <a
+          href="{% url 'tenant_list' %}"
+          class="{% if request.resolver_match.url_name == 'tenant_list' %}bg-green-800 text-white{% else %}text-white hover:bg-green-700{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+          >Tenant Records</a
+        >
+        <a
+          href="{% url 'lease_agreement_list' %}"
+          class="{% if request.resolver_match.url_name == 'lease_agreement_list' %}bg-green-800 text-white{% else %}text-white hover:bg-green-700{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+          >Lease Agreements</a
+        >
+      </nav>
+      <form action="{% url 'logout' %}" method="post" class="mt-auto p-4">
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="text-white font-extrabold transition-colors flex items-center space-x-4"
+        >
+          <img src="{% static 'logout.png' %}" class="w-10 h-10" alt="Logout Icon" />
+          Logout
+        </button>
+      </form>
+    </div>
 
-      <!-- Main content -->
-      <div :class="isCollapsed ? 'lg:pl-16' : 'lg:pl-64'" class="flex-1">
-        <div class="sticky top-0 z-10 flex h-16 bg-white shadow px-4">
-          <button @click="sidebarOpen = true" class="text-gray-700 lg:hidden">
-            <svg
-              class="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              ></path>
-            </svg>
-          </button>
-          <div class="ml-auto flex items-center">
-            <div class="flex items-center">
-              <img
-                class="h-8 w-8 rounded-full"
-                src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.1887574231.1729382400&semt=ais_hybrid"
-                alt="User Avatar"
-              />
-              <div class="ml-2">
-                <p class="text-sm font-semibold text-gray-900">
-                  {{ user.username }}
-                </p>
-                <p class="text-sm font-semibold text-gray-500">
-                  {{ user.email }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Main Content -->
-        <main class="p-4">
-          {% block content %}
-          <!-- Dynamic content will be injected here -->
-          {% endblock %}
-        </main>
-      </div>
+    <!-- Main content -->
+    <div :class="isCollapsed ? 'lg:pl-16' : 'lg:pl-64'" class="flex-1">
+      <main class="p-4">
+        {% block content %}
+        <!-- Dynamic content will be injected here -->
+        {% endblock %}
+      </main>
+    </div>
     </div>
 
     {% block scripts %}

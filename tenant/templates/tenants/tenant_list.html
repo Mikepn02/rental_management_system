@@ -42,6 +42,18 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <div class="mt-10 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                {% if tenants.has_previous %}
+                    <a href="?page={{ tenants.previous_page_number }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Previous</a>
+                {% endif %}
+                <span class="text-gray-600">Page {{ tenants.number }} of {{ tenants.paginator.num_pages }}</span>
+                {% if tenants.has_next %}
+                    <a href="?page={{ tenants.next_page_number }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Next</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

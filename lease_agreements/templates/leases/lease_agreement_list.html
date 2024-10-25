@@ -53,6 +53,17 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+        <div class="mt-10 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+          {% if lease_agreements.has_previous %}
+              <a href="?page={{ lease_agreements.previous_page_number }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Previous</a>
+          {% endif %}
+          <span class="text-gray-600">Page {{ lease_agreements.number }} of {{ lease_agreements.paginator.num_pages }}</span>
+          {% if lease_agreements.has_next %}
+              <a href="?page={{ lease_agreements.next_page_number }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Next</a>
+          {% endif %}
+      </div>
+  </div>
+</div>
 </div>
 {% endblock %}

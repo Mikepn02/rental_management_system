@@ -12,10 +12,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import secrets
 from django.contrib.auth.hashers import make_password
 from .serializers import UserSerializer
-from django.views.decorators.csrf import csrf_protect
-from django.utils.decorators import method_decorator
-from django.utils.decorators import method_decorator
-from rest_framework.permissions import IsAuthenticated
 from rental.models import Property
 from lease_agreements.models import LeaseAgreement
 from rest_framework import status
@@ -25,6 +21,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from .serializers import UserSerializer
 from django.db.models import Sum
+from django.core.paginator import Paginator
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -36,7 +33,6 @@ class RegisterView(APIView):
             user = serializer.save()  
             user.password = make_password(serializer.validated_data['password'])  
             user.save()
-            
             return redirect("login_page")
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -45,7 +41,18 @@ class RegisterView(APIView):
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
+
     def get(self, request):
+        access_token = request.COOKIES.get('access_token')
+        if access_token:
+            try:
+                refresh_token = RefreshToken(access_token)
+                user = User.objects.get(id=refresh_token['user_id'])
+                if user:
+                    login(request, user) 
+                    return redirect('dashboard')
+            except Exception as e:
+                print(f"Error decoding token: {e}")
         return render(request, 'authentication/login.html')
 
     def post(self, request):
@@ -136,6 +143,9 @@ def custom_login_required(view_func):
 def dashboard(request):
     user = request.user
     properties = Property.objects.all()
+    paginator=Paginator(properties,10)
+    page_number=request.GET.get('page',1)
+    proterties_page=paginator.get_page(page_number)
     total_income = LeaseAgreement.objects.aggregate(total=Sum('monthly_rent'))['total'] or 0
     total_expenses = Property.objects.aggregate(total=Sum('monthly_expenses'))['total'] or 0
     total_properties = Property.objects.count()
@@ -143,7 +153,7 @@ def dashboard(request):
     
     context = {
         'user': user,
-        'properties': properties,
+        'properties': proterties_page,
         'total_income': total_income,
         'total_expenses': total_expenses,
         'total_properties': total_properties,
