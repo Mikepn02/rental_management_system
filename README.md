@@ -30,7 +30,7 @@ The Rental Management System is a full-stack application designed to streamline 
 
 #### Security
 ![Security diagram](screenshots/login.png)
-![Security diagram](screenshots/signup.png.png)
+![Security diagram](screenshots/signup.png)
 
 #### Dashboard Overview
 ![Dashboard](screenshots/dashboard.png)
