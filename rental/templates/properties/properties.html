@@ -39,6 +39,8 @@ Rental Properties
           <th class="p-4 font-medium">Type</th>
           <th class="p-4 font-medium">Rent Amount</th>
           <th class="p-4 font-medium">Monthly Expenses</th>
+          <!-- <th class="p-4 font-medium">Created At</th> -->
+          <th class="p-4 font-medium">Status</th>
           <th class="p-4 font-medium">Actions</th>
         </tr>
       </thead>
@@ -60,6 +62,8 @@ Rental Properties
           <td class="p-4">{{ property.property_type }}</td>
           <td class="p-4">{{ property.rent_amount }}</td>
           <td class="p-4">{{ property.monthly_expenses}}</td>
+          <!-- <td class="p-4">{{ property.created_at }}</td> -->
+          <td class="p-4">{{ property.status}}</td>
           <td class="p-4 flex space-x-2">
             <a
               href="{% url 'update_property' property.id %}"

@@ -3,6 +3,8 @@ from .forms import LeaseAgreementForm
 from .models import LeaseAgreement
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+import json
+from django.http import JsonResponse
 
 @login_required
 def lease_agreement_list_view(request):

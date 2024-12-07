@@ -25,7 +25,6 @@ Dashboard - Overview
   </div>
 </div>
 
-
 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-y-2 md:gap-x-5">
   <div class="bg-white shadow-lg mt-6 p-6 rounded-md">
     <h3 class="text-xl font-bold mb-4">Income vs Expenses</h3>
@@ -40,7 +39,6 @@ Dashboard - Overview
     </div>
   </div>
 </div>
-
 
 <div class="overflow-x-auto mt-10">
   <h1 class="text-xl font-bold text-[#65FE08] mb-10">Here are All Rent Properties</h1>
@@ -88,59 +86,78 @@ Dashboard - Overview
     </tbody>
   </table>
 
-
   <div class="my-5 flex items-center justify-center">
     <a href="{% url 'rental_properties' %}" class="text-lime-700 font-bold text-lg text-center">view more</a>
   </div>
 </div>
-
 <script>
   const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
-  const propertiesCtx = document.getElementById('propertiesChart').getContext('2d');
-
-  new Chart(incomeExpenseCtx, {
-    type: 'line',
+  const incomeExpenseChart = new Chart(incomeExpenseCtx, {
+    type: 'bar',
     data: {
-      labels: ['January', 'February', 'March'],
+      labels: [
+        {% for month in monthly_income %}
+          "Month {{ month.month }}",
+        {% endfor %}
+      ],
       datasets: [
         {
           label: 'Income',
-          data: [12000, 19000, 30000],
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1,
+          data: [
+            {% for month in monthly_income %}
+              {{ month.total }},
+            {% endfor %}
+          ],
+          backgroundColor: 'rgba(75, 192, 192, 0.6)',
         },
         {
           label: 'Expenses',
-          data: [10000, 15000, 20000],
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
+          data: [
+            {% for month in monthly_expenses %}
+              {{ month.total }},
+            {% endfor %}
+          ],
+          backgroundColor: 'rgba(255, 99, 132, 0.6)',
         },
       ],
     },
     options: {
       responsive: true,
+      scales: {
+        x: { beginAtZero: true },
+        y: { beginAtZero: true },
+      },
     },
   });
 
-  new Chart(propertiesCtx, {
-    type: 'bar',
+  // Properties Chart
+  const propertiesCtx = document.getElementById('propertiesChart').getContext('2d');
+  const propertiesChart = new Chart(propertiesCtx, {
+    type: 'pie',
     data: {
-      labels: ['Available', 'Rented', 'Pending'],
+      labels: [
+        {% for status in property_status_counts %}
+          "{{ status.status }}",
+        {% endfor %}
+      ],
       datasets: [
         {
-          label: 'Properties',
-          data: [10, 5, 2],
-          backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-          borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
-          borderWidth: 1,
+          label: 'Properties by Status',
+          data: [
+            {% for status in property_status_counts %}
+              {{ status.count }},
+            {% endfor %}
+          ],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(255, 206, 86, 0.6)',
+            'rgba(54, 162, 235, 0.6)',
+          ],
         },
       ],
     },
-    options: {
-      responsive: true,
-    },
+    options: { responsive: true },
   });
 </script>
 {% endblock %}

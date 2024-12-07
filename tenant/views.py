@@ -3,14 +3,23 @@ from .forms import TenantForm
 from .models import Tenant
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.serializers import serialize
+from django.http import JsonResponse
+import json
 
-@login_required
+
+# @login_required
 def tenant_list_view(request):
     tenants = Tenant.objects.all()
+    
     paginator = Paginator(tenants , 10)
     page_number = request.GET.get('page', 1)
     tenants_page = paginator.get_page(page_number)
     return render(request , 'tenants/tenant_list.html', {'tenants': tenants_page})
+
+    # serialized_properties = serialize('json', tenants)
+    # parsed_properties = json.loads(serialized_properties)
+    # return JsonResponse({"properties": parsed_properties}, safe=False)
 
 
 @login_required

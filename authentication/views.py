@@ -13,6 +13,8 @@ import secrets
 from django.contrib.auth.hashers import make_password
 from .serializers import UserSerializer
 from rental.models import Property
+from django.db.models.functions import ExtractMonth
+from django.db.models import Sum, Count
 from lease_agreements.models import LeaseAgreement
 from rest_framework import status
 from rest_framework.response import Response
@@ -143,26 +145,43 @@ def custom_login_required(view_func):
 def dashboard(request):
     user = request.user
     properties = Property.objects.all()
-    paginator=Paginator(properties,10)
-    page_number=request.GET.get('page',1)
-    proterties_page=paginator.get_page(page_number)
+    paginator = Paginator(properties, 10)
+    page_number = request.GET.get('page', 1)
+    properties_page = paginator.get_page(page_number)
+
     total_income = LeaseAgreement.objects.aggregate(total=Sum('monthly_rent'))['total'] or 0
     total_expenses = Property.objects.aggregate(total=Sum('monthly_expenses'))['total'] or 0
     total_properties = Property.objects.count()
     total_leases = LeaseAgreement.objects.count()
-    
+    monthly_income = list(
+        LeaseAgreement.objects.annotate(month=ExtractMonth('start_date'))
+        .values('month')
+        .annotate(total=Sum('monthly_rent'))
+        .order_by('month')
+    )
+    monthly_expenses = list(
+        Property.objects.annotate(month=ExtractMonth('created_at'))
+        .values('month')
+        .annotate(total=Sum('monthly_expenses'))
+        .order_by('month')
+    )
+
+    property_status_counts = list(
+        Property.objects.values('status').annotate(count=Count('status'))
+    )
+
     context = {
         'user': user,
-        'properties': proterties_page,
+        'properties': properties_page,
         'total_income': total_income,
         'total_expenses': total_expenses,
         'total_properties': total_properties,
         'total_leases': total_leases,
+        'monthly_income': monthly_income,
+        'monthly_expenses': monthly_expenses,
+        'property_status_counts': property_status_counts,
     }
-
     return render(request, 'dashboard.html', context)
-
-
 def login_page(request):
     return render(request, 'authentication/login.html')
 

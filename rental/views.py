@@ -5,6 +5,11 @@ from .models import Property
 from authentication.models import User
 import logging
 from django.core.paginator import Paginator
+import json
+from django.http import JsonResponse
+from django.core.serializers import serialize
+from django.http import JsonResponse
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -16,12 +21,22 @@ def rental_properties_page(request):
         return redirect('login_page')
 
     user = request.user
-    properties = Property.objects.all()
+    
+    properties = Property.objects.all().order_by('-created_at')
+    serialized_properties = serialize('json', properties)
+    parsed_properties = json.loads(serialized_properties)
+    
+    
 
     paginator=Paginator(properties,10)
     page_number=request.GET.get('page',1)
     proterties_page=paginator.get_page(page_number)
     return render(request, 'properties/properties.html', {'properties': proterties_page, 'user': user})
+    # return JsonResponse({"properties": parsed_properties}, safe=False)
+
+
+
+
 
 @login_required
 def create_property_view(request):
